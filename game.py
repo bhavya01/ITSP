@@ -57,7 +57,10 @@ while True:
 		bot.vely = 0
 		bot.rect.y = INIT_Y 
 		if jump_state_flag == True:
-			bot.state = 0
+			if bot.velx != 0:
+				bot.state = 2
+			else :
+				bot.state = 0
 			jump_state_flag = False
 
 	bot_frame += 1
