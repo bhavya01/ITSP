@@ -37,6 +37,24 @@ class Bot(pygame.sprite.Sprite):
 		self.rect=self.image.get_rect()
 		self.rect.x=x
 		self.rect.y=y
-		# self.rect.width=width
-		# self.rect.height=height
 		Bot.bots.add(self)
+
+class Bullet(pygame.sprite.Sprite):
+	bullets = pygame.sprite.Group()
+	def __init__(self,x,y,width,height,image):
+		pygame.sprite.Sprite.__init__(self)
+		self.image = pygame.image.load(image)
+		self.rect = self.image.get_rect()
+		self.rect.x = x
+		self.rect.y = y
+		self.rect.width = width
+		self.rect.height = height
+		self.velx = 0
+		self.vely = 0
+	def update(self):
+		self.rect.x += self.velx
+		self.rect.y += self.vely 
+	def tick(self,x,y,width,height):
+		self.rect.x = x
+		self.rect.y = y
+		self.image = pygame.transform.scale(self.image, (width, height))
