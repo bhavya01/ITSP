@@ -1,10 +1,11 @@
-import random,sys,pygame
+import sys
 from time import sleep
 from classes import *
 pygame.init()
 clock = pygame.time.Clock()
 
 #Initializing Things
+bullets_available = 20
 WIDTH = 130
 HEIGHT = 130
 SIZE = (1000,700)
@@ -23,7 +24,8 @@ RunShoot = ["png/RunShoot (1).png", "png/RunShoot (2).png", "png/RunShoot (3).pn
 
 images = [Idle,Jump,Run,Shoot,RunShoot]
 bot = Bot(images,INIT_X,INIT_Y,WIDTH,HEIGHT,0,0)
-bullet = Bullet(INIT_X,INIT_Y,30,30,"png/FireBall.png")
+
+bullet_list = []
 screen = pygame.display.set_mode(SIZE,0,32)
 pygame.display.set_caption('SharpShooter')
 COLOR = (255,255,255)
@@ -50,18 +52,22 @@ while True:
 				bot.state = 1
 				jump_state_flag = True
 			if event.key == pygame.K_SPACE :
-				if bot.velx == 0:
-					bot.state = 3
-				else :
-					bot.state = 4
-				Bullet.bullets.add(bullet)
-				
-				if bot.direction == 0:
-					bullet.velx = 2*VEL_X
-					bullet.tick(bot.rect.x + bot.rect.width/2,bot.rect.y+bot.rect.height/3,bullet.rect.width,bullet.rect.height)
-				else:
-					bullet.velx = -2*VEL_X
-					bullet.tick(bot.rect.x+bot.rect.width/4,bot.rect.y+bot.rect.height/3,bullet.rect.width,bullet.rect.height)
+				if bullets_available > 0:
+					bullets_available -= 1
+					bullet = Bullet(INIT_X,INIT_Y,30,30,"png/FireBall.png")
+					bullet_list.append(bullet)
+					if bot.velx == 0:
+						bot.state = 3
+					else :
+						bot.state = 4
+
+					if bot.direction == 0:
+						bullet.velx = 2*VEL_X
+						bullet.tick(bot.rect.x + bot.rect.width/2,bot.rect.y+bot.rect.height/3,bullet.rect.width,bullet.rect.height)
+					else:
+						bullet.velx = -2*VEL_X
+						bullet.tick(bot.rect.x+bot.rect.width/4,bot.rect.y+bot.rect.height/3,bullet.rect.width,bullet.rect.height)
+					Bullet.bullets.add(bullet_list[len(bullet_list)-1])
 
 		elif event.type == pygame.KEYUP:
 			if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
@@ -86,7 +92,11 @@ while True:
 
 	
 	bot.update()
-	bullet.update()
+	for item in list(bullet_list):
+		if item.collision():
+			Bullet.bullets.remove(item)
+			bullet_list.remove(item)
+		item.update()
 	bot_frame += 1
 	if(bot_frame == FPS/10):
 		bot_frame = 0

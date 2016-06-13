@@ -2,12 +2,14 @@ import pygame
 import random
 
 screen = pygame.display.set_mode((1000,700))
+
 class Bot(pygame.sprite.Sprite):
 	bots = pygame.sprite.Group()
 	def __init__(self,images,x,y,width,height,state,substate):
 		#images is list of states namely idle,run,dead,shoot,jump_and_shoot
 		pygame.sprite.Sprite.__init__(self)
 		self.direction = 0
+		self.health = 100
 		self.substate = substate
 		self.state = state
 		self.images = images
@@ -41,6 +43,7 @@ class Bot(pygame.sprite.Sprite):
 
 class Bullet(pygame.sprite.Sprite):
 	bullets = pygame.sprite.Group()
+
 	def __init__(self,x,y,width,height,image):
 		pygame.sprite.Sprite.__init__(self)
 		self.image = pygame.image.load(image)
@@ -51,9 +54,14 @@ class Bullet(pygame.sprite.Sprite):
 		self.rect.height = height
 		self.velx = 0
 		self.vely = 0
+
+	def collision(self):
+		if self.rect.x > 1000 or self.rect.x < 0:
+			return True
 	def update(self):
 		self.rect.x += self.velx
-		self.rect.y += self.vely 
+		self.rect.y += self.vely
+ 
 	def tick(self,x,y,width,height):
 		self.rect.x = x
 		self.rect.y = y
