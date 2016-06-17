@@ -1,8 +1,20 @@
 import pygame
 import random
+
+WIDTH = 120
+HEIGHT = 140
+SIZE = (1200,700)
+INIT_X = 0
+INIT_Y = SIZE[1] - HEIGHT
+VEL_X = 6
+VEL_Y = 6
+FPS = 80
 MAX_X = 1200
 MIN_X = 0
-screen = pygame.display.set_mode((MAX_X,700))
+screen = pygame.display.set_mode(SIZE,0,32)
+pygame.display.set_caption('SharpShooter')
+COLOR = (255,255,255)
+
 
 class Bot(pygame.sprite.Sprite):
 	bots = pygame.sprite.Group()
@@ -27,6 +39,18 @@ class Bot(pygame.sprite.Sprite):
 		self.velx = 0
 		self.vely = 0
 		Bot.bots.add(self)
+
+	def jump_check(self):
+		if(self.rect.y > INIT_Y):
+			self.vely = 0
+			self.rect.y = INIT_Y 
+			if self.jump_state_flag == True:
+				if self.velx != 0:
+					self.state = 2
+				else :
+					self.state = 0
+				self.jump_state_flag = False
+		return	
 	def collision(self):
 		if self.rect.x + self.rect.width > MAX_X +20:
 			self.rect.x = MAX_X- self.rect.width
