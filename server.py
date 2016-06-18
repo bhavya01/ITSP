@@ -14,6 +14,8 @@ class ClientChannel(PodSixNet.Channel.Channel):
 		direction = data["direction"]
 		# health = data["health"]
 		self._server.placeBot(x, y, state, substate, direction, self.gameid, num ,data)
+	def Network_bullet(self,data):
+		self._server.placeBullet(data)
  
 class myServer(PodSixNet.Server.Server):
 	def __init__(self, *args, **kwargs):
@@ -26,6 +28,11 @@ class myServer(PodSixNet.Server.Server):
 		game = [a for a in self.games if a.gameid==gameid]
 		if len(game)==1:
 			game[0].placeBot(x, y, state, substate,direction, gameid, num, data)
+	def placeBullet(self,data):
+		gameid = data["gameid"]
+		game = [a for a in self.games if a.gameid == gameid]
+		if len(game)==1:
+			game[0].placeBullet(data)
 	
 	channelClass = ClientChannel
 
@@ -53,6 +60,12 @@ class Game:
 
 	def placeBot(self, x, y, state, substate, direction, gameid, num, data):
 		if num == 0:
+			self.player1.Send(data)
+		else:
+			self.player0.Send(data)
+	def placeBullet(self,data):
+		num = data["num"]
+		if  num == 0:
 			self.player1.Send(data)
 		else:
 			self.player0.Send(data)

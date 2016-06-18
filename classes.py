@@ -39,6 +39,8 @@ class Bot(pygame.sprite.Sprite):
 		self.velx = 0
 		self.vely = 0
 		Bot.bots.add(self)
+	def on_platform(self):
+		return self.rect.y == INIT_Y
 
 	def jump_check(self):
 		if(self.rect.y > INIT_Y):
@@ -68,7 +70,8 @@ class Bot(pygame.sprite.Sprite):
 
 	def tick(self,x,y,width,height):
 		Bot.bots.remove(self)
-		self.vely += 1
+		if self.rect.y < INIT_Y and not self.on_platform():
+			self.vely += 1
 		if not (self.substate == 9 and self.state == 5):		
 			self.substate  = (self.substate + 1)%len(self.images[self.state])
 		self.image= pygame.image.load(self.images[self.state][self.substate])

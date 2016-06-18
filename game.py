@@ -39,6 +39,19 @@ class BotGame(ConnectionListener):
 		if not (self.bot1.state == 5 and self.bot1.substate == 10) :
 			self.bot1.state = state
 			self.bot1.substate = substate
+
+	def Network_bullet(self,data):		
+		if self.bot1.bullets_available > 0:
+			self.bot1.bullets_available -= 1
+			bullet = Bullet(INIT_X,INIT_Y,30,30,"png/FireBall.png")
+			self.bot1.bullet_list.append(bullet)
+			if self.bot1.direction == 0:
+				bullet.velx = 3*VEL_X
+				bullet.tick(self.bot1.rect.x + self.bot1.rect.width/2,self.bot1.rect.y+self.bot1.rect.height/3,bullet.rect.width,bullet.rect.height)
+			else:
+				bullet.velx = -3*VEL_X
+				bullet.tick(self.bot1.rect.x+self.bot1.rect.width/4,self.bot1.rect.y+self.bot1.rect.height/3,bullet.rect.width,bullet.rect.height)
+			Bullet.bullets.add(self.bot1.bullet_list[len(self.bot1.bullet_list)-1])
 #Game Loop
 	def update(self):
 		while not self.running:
@@ -62,7 +75,7 @@ class BotGame(ConnectionListener):
 					self.bot.velx = -VEL_X
 					self.bot.state=2
 					self.bot.jump_state_flag = False
-				if event.key == pygame.K_UP and self.bot.rect.y == INIT_Y:###############Needs to be updated ##############
+				if event.key == pygame.K_UP and self.bot.on_platform():###############Needs to be updated ##############
 					self.bot.vely = -VEL_Y
 					self.bot.state = 1
 					self.bot.jump_state_flag = True
@@ -83,7 +96,7 @@ class BotGame(ConnectionListener):
 							bullet.velx = -3*VEL_X
 							bullet.tick(self.bot.rect.x+self.bot.rect.width/4,self.bot.rect.y+self.bot.rect.height/3,bullet.rect.width,bullet.rect.height)
 						Bullet.bullets.add(self.bot.bullet_list[len(self.bot.bullet_list)-1])
-						self.Send({"action": "bullet", "x": self.bot.rect.x,"y":self.bot.rect.y,"vel" : bullet.velx,"gameid": self.gameid, "num": self.num})	
+						self.Send({"action": "bullet","gameid": self.gameid, "num": self.num})	
 			elif event.type == pygame.KEYUP:
 				if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
 					self.bot.velx = 0
