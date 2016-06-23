@@ -40,7 +40,9 @@ class Bot(pygame.sprite.Sprite):
 		self.vely = 0
 		Bot.bots.add(self)
 	def on_platform(self):
-		return self.rect.y == INIT_Y
+		if self.rect.y == INIT_Y:
+			return True
+	
 
 	def jump_check(self):
 		if(self.rect.y > INIT_Y):
@@ -61,12 +63,12 @@ class Bot(pygame.sprite.Sprite):
 			self.rect.x = MIN_X
 			return True
 
-	def update(self):
-		if self.health==0:
-			self.state = 5
+	def update(self,platform):
 		if not self.collision():
 			self.rect.x += self.velx
 			self.rect.y += self.vely 
+		if self.health==0:
+			self.state = 5
 
 	def tick(self,x,y,width,height):
 		Bot.bots.remove(self)
@@ -85,7 +87,7 @@ class Bot(pygame.sprite.Sprite):
 			self.rect.y=y
 			Bot.bots.add(self)
 		else :
-			self.rect.y = -100
+			self.rect.height = 0
 
 class Bullet(pygame.sprite.Sprite):
 	bullets = pygame.sprite.Group()
@@ -118,3 +120,17 @@ class Bullet(pygame.sprite.Sprite):
 		self.rect.x = x
 		self.rect.y = y
 		self.image = pygame.transform.scale(self.image, (width, height))
+
+class Platform(pygame.sprite.Sprite):
+	platforms = pygame.sprite.Group()
+	def __init__(self,x,y,width,height,image):
+		pygame.sprite.Sprite.__init__(self)
+		self.image = pygame.image.load(image)
+		self.rect = self.image.get_rect()
+		self.rect.x = x
+		self.rect.y = y
+		self.rect.width = width
+		self.rect.height = height
+		Platform.platforms.add(self)
+	def tick(self):
+		self.image = pygame.transform.scale(self.image,(self.rect.width,self.rect.height))

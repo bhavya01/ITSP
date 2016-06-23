@@ -12,6 +12,7 @@ class BotGame(ConnectionListener):
 		self.clock = pygame.time.Clock()
 		self.bot = Bot(images,INIT_X,INIT_Y,WIDTH,HEIGHT,0,0)
 		self.bot1 = Bot(images,INIT_X+500,INIT_Y,WIDTH,HEIGHT,0,0)
+		self.platform1  = Platform(300,600,200,50,"png/LargePlatform.png")
 		self.bot_frame = 0
 		self.Connect()
 		self.gameid  = None
@@ -60,6 +61,7 @@ class BotGame(ConnectionListener):
 			sleep(0.01)
 		connection.Pump()
 		self.Pump()
+		#Event management
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				pygame.quit()
@@ -75,12 +77,13 @@ class BotGame(ConnectionListener):
 					self.bot.velx = -VEL_X
 					self.bot.state=2
 					self.bot.jump_state_flag = False
-				if event.key == pygame.K_UP and self.bot.on_platform():###############Needs to be updated ##############
+				if event.key == pygame.K_UP and self.bot.on_platform:#(self.platform1):###############Needs to be updated ##############
+					self.on_platform = False
 					self.bot.vely = -VEL_Y
 					self.bot.state = 1
 					self.bot.jump_state_flag = True
 				if event.key == pygame.K_SPACE :
-					if self.bot.bullets_available > 0:
+					if self.bot.bullets_available > 0 and self.bot.health > 0:
 						self.bot.bullets_available -= 1
 						bullet = Bullet(INIT_X,INIT_Y,30,30,"png/FireBall.png")
 						self.bot.bullet_list.append(bullet)
@@ -122,18 +125,22 @@ class BotGame(ConnectionListener):
 				Bullet.bullets.remove(item)
 				self.bot1.bullet_list.remove(item)
 			item.update()
-		print self.bot1.health,self.bot.health	
+
+		#Sending the data of player to the server
 		self.Send({"action": "botpos", "x":self.bot.rect.x, "y":self.bot.rect.y, "gameid": self.gameid, "num": self.num,"state": self.bot.state,"substate": self.bot.substate, "direction" : self.bot.direction, "health_bot1" : self.bot1.health})				
-	#Updating the bot
-		self.bot1.update()
-		self.bot.update()	
+		#Updating the bot
+		self.bot1.update(self.platform1)
+		self.bot.update(self.platform1)	
 		self.bot_frame += 1
 		if(self.bot_frame == FPS/10):
 			self.bot_frame = 0
 			self.bot.tick(self.bot.rect.x,self.bot.rect.y,self.bot.rect.width,self.bot.rect.height)
 			self.bot1.tick(self.bot1.rect.x,self.bot1.rect.y,self.bot1.rect.width,self.bot1.rect.height)
+
+		self.platform1.tick()
 		#Updating the screen
 		screen.fill(COLOR)	
+		Platform.platforms.draw(screen)
 		Bot.bots.draw(screen)
 		Bullet.bullets.draw(screen)
 		pygame.display.flip()

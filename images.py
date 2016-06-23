@@ -1,0 +1,7 @@
+Idle = ["png/Idle (1).png", "png/Idle (2).png", "png/Idle (3).png", "png/Idle (4).png", "png/Idle (5).png", "png/Idle (6).png", "png/Idle (7).png", "png/Idle (8).png", "png/Idle (9).png", "png/Idle (10).png"]
+Jump = ["png/Jump (1).png", "png/Jump (2).png", "png/Jump (3).png", "png/Jump (4).png", "png/Jump (5).png", "png/Jump (6).png", "png/Jump (7).png", "png/Jump (8).png", "png/Jump (9).png", "png/Jump (10).png"]
+Run = ["png/Run (1).png", "png/Run (2).png", "png/Run (3).png", "png/Run (4).png", "png/Run (5).png", "png/Run (6).png", "png/Run (7).png", "png/Run (8).png"]
+Shoot = ["png/Shoot (1).png","png/Shoot (2).png","png/Shoot (3).png","png/Shoot (4).png"]
+RunShoot = ["png/RunShoot (1).png", "png/RunShoot (2).png", "png/RunShoot (3).png", "png/RunShoot (4).png", "png/RunShoot (5).png", "png/RunShoot (6).png", "png/RunShoot (7).png", "png/RunShoot (8).png"]
+Dead = ["png/Dead (1).png", "png/Dead (2).png", "png/Dead (3).png", "png/Dead (4).png", "png/Dead (5).png", "png/Dead (6).png", "png/Dead (7).png", "png/Dead (8).png", "png/Dead (9).png", "png/Dead (10).png"] 
+images = [Idle,Jump,Run,Shoot,RunShoot,Dead]
