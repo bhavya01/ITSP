@@ -70,8 +70,13 @@ class Game:
 		else:
 			self.player0.Send(data)
 print "STARTING SERVER ON LOCALHOST"
-boxesServe=myServer()
+address=raw_input("Host:Port (localhost:8000): ")
+if not address:
+    host, port="localhost", 8000
+else:
+    host,port=address.split(":")
+Serve = myServer(localaddr=(host, int(port)))
 while True:
-	boxesServe.Pump()
+	Serve.Pump()
 
 

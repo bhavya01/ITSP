@@ -12,9 +12,25 @@ class BotGame(ConnectionListener):
 		self.clock = pygame.time.Clock()
 		self.bot = Bot(images,INIT_X,INIT_Y,WIDTH,HEIGHT,0,0)
 		self.bot1 = Bot(images,INIT_X+500,INIT_Y,WIDTH,HEIGHT,0,0)
-		self.platform1  = Platform(300,600,200,50,"png/LargePlatform.png")
+		self.platform1 = Platform(400,550,200,50,"png/LargePlatform.png")
+		self.platform2 = Platform(800,400,200,50,"png/LargePlatform.png")
+		self.platform3 = Platform(50,425,200,50,"png/LargePlatform.png")
+		self.ground =  Platform(-50,680,500,50,"png/LargePlatform.png")
+		self.ground1 = Platform(500,680,500,50,"png/LargePlatform.png")
 		self.bot_frame = 0
-		self.Connect()
+		address=raw_input("Address of Server: ")
+		try:
+			if not address:
+				host, port="localhost", 8000
+			else:
+				host,port=address.split(":")
+			self.Connect((host, int(port)))
+		except:
+			print "Error Connecting to Server"
+			print "Usage:", "host:port"
+			print "e.g.", "localhost:31425"
+			exit()
+		print "Boxes client started"
 		self.gameid  = None
 		self.num = 0
 	def Network_startgame(self, data):
@@ -77,11 +93,11 @@ class BotGame(ConnectionListener):
 					self.bot.velx = -VEL_X
 					self.bot.state=2
 					self.bot.jump_state_flag = False
-				if event.key == pygame.K_UP and self.bot.on_platform:#(self.platform1):###############Needs to be updated ##############
-					self.on_platform = False
+				if event.key == pygame.K_UP and self.bot.on_platform():###############Needs to be updated ##############
 					self.bot.vely = -VEL_Y
 					self.bot.state = 1
 					self.bot.jump_state_flag = True
+					self.bot.platform_flag = False
 				if event.key == pygame.K_SPACE :
 					if self.bot.bullets_available > 0 and self.bot.health > 0:
 						self.bot.bullets_available -= 1
@@ -112,8 +128,8 @@ class BotGame(ConnectionListener):
 				
 		self.bot.jump_check()
 		self.bot1.jump_check()
-				
-		
+		self.bot.on_platform()		
+		self.bot1.on_platform()
 		# Updating the bullets of bot
 		for item in list(self.bot.bullet_list):
 			if item.collision(self.bot1):
@@ -129,15 +145,18 @@ class BotGame(ConnectionListener):
 		#Sending the data of player to the server
 		self.Send({"action": "botpos", "x":self.bot.rect.x, "y":self.bot.rect.y, "gameid": self.gameid, "num": self.num,"state": self.bot.state,"substate": self.bot.substate, "direction" : self.bot.direction, "health_bot1" : self.bot1.health})				
 		#Updating the bot
-		self.bot1.update(self.platform1)
-		self.bot.update(self.platform1)	
+		self.bot1.update()
+		self.bot.update()	
 		self.bot_frame += 1
 		if(self.bot_frame == FPS/10):
 			self.bot_frame = 0
 			self.bot.tick(self.bot.rect.x,self.bot.rect.y,self.bot.rect.width,self.bot.rect.height)
 			self.bot1.tick(self.bot1.rect.x,self.bot1.rect.y,self.bot1.rect.width,self.bot1.rect.height)
-
+		self.bot.platform_check()
+		self.bot1.platform_check()
 		self.platform1.tick()
+		self.platform2.tick()
+		self.platform3.tick()
 		#Updating the screen
 		screen.fill(COLOR)	
 		Platform.platforms.draw(screen)
