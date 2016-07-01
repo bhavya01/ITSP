@@ -12,11 +12,10 @@ class ClientChannel(PodSixNet.Channel.Channel):
 		self.gameid = data["gameid"]
 		num = data["num"]
 		direction = data["direction"]
-		# health = data["health"]
 		self._server.placeBot(x, y, state, substate, direction, self.gameid, num ,data)
 	def Network_bullet(self,data):
 		self._server.placeBullet(data)
- 
+
 class myServer(PodSixNet.Server.Server):
 	def __init__(self, *args, **kwargs):
 		PodSixNet.Server.Server.__init__(self, *args, **kwargs)
